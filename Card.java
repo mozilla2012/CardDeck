@@ -92,7 +92,7 @@ public class Card implements Comparable{
             case 2: return "Hearts";
             case 3: return "Diamonds";
             case 4: return "Clubs";
-            default: return String.valueOf(this.getSuit());
+            default: return "Suit_" + String.valueOf(this.getSuit());
         }
     }
 
