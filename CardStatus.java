@@ -8,5 +8,6 @@ public enum CardStatus {
     DISCARDED,
     OUT_OF_PLAY,
     PLAYED,
+    ACTIVATED,
     UNKNOWN
 }
