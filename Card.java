@@ -9,11 +9,11 @@ public class Card {
     protected CardStatus status;
 
     public Card() {
-        new Card("", CardStatus.UNKNOWN);
+        this("", CardStatus.UNKNOWN);
     }
 
     public Card(String newName) {
-        new Card(newName, CardStatus.UNKNOWN);
+        this(newName, CardStatus.UNKNOWN);
     }
 
     public Card(String newName, CardStatus newStatus) {

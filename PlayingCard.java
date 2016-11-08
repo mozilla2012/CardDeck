@@ -12,23 +12,53 @@ public class PlayingCard extends Card implements Comparable {
     private static final int UNKNOWN = -1;
 
     public PlayingCard() {
-        new PlayingCard(UNKNOWN, UNKNOWN, CardStatus.UNKNOWN, false);
+        this(UNKNOWN, UNKNOWN, CardStatus.UNKNOWN, false);
     }
 
     public PlayingCard(int newValue, int newSuit) {
-        new PlayingCard(newValue, newSuit, CardStatus.UNKNOWN, false);
+        this(newValue, newSuit, CardStatus.UNKNOWN, false);
+    }
+
+    public PlayingCard(int newValue, String newSuit) {
+        this(newValue, newSuit, CardStatus.UNKNOWN, false);
     }
 
     public PlayingCard(int newValue, int newSuit, boolean newAceHigh) {
-        new PlayingCard(newValue, newSuit, CardStatus.UNKNOWN, newAceHigh);
+        this(newValue, newSuit, CardStatus.UNKNOWN, newAceHigh);
+    }
+
+    public PlayingCard(int newValue, String newSuit, boolean newAceHigh) {
+        this(newValue, newSuit, CardStatus.UNKNOWN, newAceHigh);
     }
 
     public PlayingCard(int newValue, int newSuit, CardStatus newStatus) {
-        new PlayingCard(newValue, newSuit, newStatus, false);
+        this(newValue, newSuit, newStatus, false);
+    }
+
+    public PlayingCard(int newValue, String newSuit, CardStatus newStatus) {
+        this(newValue, newSuit, newStatus, false);
     }
 
     public PlayingCard(int newValue, int newSuit, CardStatus newStatus, boolean newAceHigh) {
         this.suit = newSuit;
+        this.status = newStatus;
+        this.aceHigh = newAceHigh;
+        if (aceHigh && newValue == 1) {
+            this.value = 14;
+        }
+        else {
+            this.value = newValue;
+        }
+    }
+
+    public PlayingCard(int newValue, String newSuit, CardStatus newStatus, boolean newAceHigh) {
+        switch(newSuit) {
+            case "Spades": this.suit = 1; break;
+            case "Hearts": this.suit = 2; break;
+            case "Diamonds": this.suit = 3; break;
+            case "Clubs": this.suit = 4; break;
+            default: this.suit = -1;
+        }
         this.status = newStatus;
         this.aceHigh = newAceHigh;
         if (aceHigh && newValue == 1) {
@@ -68,6 +98,16 @@ public class PlayingCard extends Card implements Comparable {
         this.suit = newSuit;
     }
 
+    public void setSuit(String newSuit) {
+        switch(newSuit) {
+            case "Spades": this.suit = 1; break;
+            case "Hearts": this.suit = 2; break;
+            case "Diamonds": this.suit = 3; break;
+            case "Clubs": this.suit = 4; break;
+            default: this.suit = -1;
+        }
+    }
+
     public void setTrump(boolean newTrump) {
         this.trump = newTrump;
     }
@@ -83,14 +123,33 @@ public class PlayingCard extends Card implements Comparable {
 
     public void setAceHigh(boolean newAceHigh) {
         this.aceHigh = newAceHigh;
+        if (getValue() == 1 && newAceHigh) {
+            this.setValue(14);
+        }
+        else if (getValue() == 14 && !newAceHigh) {
+            this.setValue(1);
+        }
     }
 
-    //Todo:
     public String getStringValue(){
         switch (this.getValue()) {
-
+            case 1:
+            case 14: return "Ace";
+            case 11: return "Jack";
+            case 12: return "Queen";
+            case 13: return "King";
+            case 15: return "Joker";
+            case 2: return "Two";
+            case 3: return "Three";
+            case 4: return "Four";
+            case 5: return "Five";
+            case 6: return "Six";
+            case 7: return "Seven";
+            case 8: return "Eight";
+            case 9: return "Nine";
+            case 10: return "Ten";
+            default: return Integer.toString(value);
         }
-        return "todo";
     }
 
     public String getStringSuit(){
@@ -113,10 +172,6 @@ public class PlayingCard extends Card implements Comparable {
                 ", trump=" + trump +
                 ", aceHigh=" + aceHigh +
                 '}';
-    }
-
-    public String prettyPrint() {
-        return this.getStringValue() + " of " + this.getStringSuit();
     }
 
     @Override
@@ -162,6 +217,6 @@ public class PlayingCard extends Card implements Comparable {
 
     @Override
     public String getName() {
-        return getStringSuit();
+        return this.getStringValue() + " of " + this.getStringSuit();
     }
 }
