@@ -1,17 +1,15 @@
 package cardDeck;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
- * Created by Evan Arnold on 11/8/2016.
+ * This can be used to represent any stack of cards... A draw deck, a kitty, a hand, a trash pile, etc.
  */
 public class Deck {
 
     private String name;
-    private ArrayList<Card> pile;
-
-    // TODO: 11/8/2016
-    // Do we even need this?
+    private ArrayList<Card> pile; //0 is the top of the deck, face down.
     private boolean faceDown;
 
     public Deck(String newName) {
@@ -61,16 +59,35 @@ public class Deck {
     }
 
     public void shuffle() {
-        // TODO: 11/8/2016
+        Collections.shuffle(pile);
     }
 
-    public Card draw(boolean top) {
-        return drawN(1, top).get(0);
+    public Card draw(boolean fromTop) {
+        return drawN(1, fromTop).get(0);
     }
 
-    public ArrayList<Card> drawN(int numCards, boolean top) {
+    public ArrayList<Card> drawN(int numCards, boolean fromTop) {
         ArrayList<Card> subset = new ArrayList<>();
-        if (top) {
+        if (fromTop == faceDown) {
+            for (int i = 0; i < numCards; i++) {
+                subset.add(pile.remove(0));
+            }
+        }
+        else {
+            for (int i = 0; i < numCards; i++) {
+                subset.add(pile.remove(pile.size()-1));
+            }
+        }
+        return subset;
+    }
+
+    public Card peek(boolean fromTop) {
+        return peekN(1, fromTop).get(0);
+    }
+
+    public ArrayList<Card> peekN(int numCards, boolean fromTop) {
+        ArrayList<Card> subset = new ArrayList<>();
+        if (fromTop == faceDown) {
             for (int i = 0; i < numCards; i++) {
                 subset.add(pile.get(i));
             }
@@ -83,13 +100,51 @@ public class Deck {
         return subset;
     }
 
-    public void peek(boolean top) {
-        // TODO: 11/8/2016
-        //return peekN(1, top)
+    public void insert(Card card, boolean onTop) {
+        ArrayList<Card> array = new ArrayList<>();
+        array.add(card);
+        insert(array, onTop);
     }
 
-    public void peekN(int numCards, boolean top) {
-        // TODO: 11/8/2016
-        //return some cards
+    public void insert(ArrayList<Card> cards, boolean onTop) {
+        if (onTop) {
+            for (Card c : cards) {
+                pile.add(0, c);
+            }
+        }
+        else {
+            pile.addAll(cards);
+        }
+    }
+
+    public void insertAndShuffle(Card card) {
+        ArrayList<Card> array = new ArrayList<>();
+        array.add(card);
+        insertAndShuffle(array);
+    }
+
+    public void insertAndShuffle(ArrayList<Card> cards) {
+        pile.addAll(cards);
+        this.shuffle();
+    }
+
+    public ArrayList<String> getCardNames() {
+        ArrayList<String> cards = new ArrayList<>();
+        for (Card c : pile) {
+            cards.add(c.getName());
+        }
+        return cards;
+    }
+
+    @Override
+    public String toString() {
+        String toString = "";
+        if(name != null && !name.isEmpty()) {
+            toString = name + ":";
+        }
+        for (Card c : pile) {
+            toString += c.getName() + "\n";
+        }
+        return toString;
     }
 }
