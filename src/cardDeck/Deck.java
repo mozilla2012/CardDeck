@@ -9,7 +9,7 @@ import java.util.Collections;
 public class Deck {
 
     private String name;
-    private ArrayList<Card> pile; //0 is the top of the deck, face down.
+    private ArrayList<Card> pile; // 0 is the top of the deck, face down.
     private boolean faceDown;
 
     public Deck(String newName) {

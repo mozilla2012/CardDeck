@@ -52,12 +52,14 @@ public class PlayingCard extends Card implements Comparable {
     }
 
     public PlayingCard(int newValue, String newSuit, CardStatus newStatus, boolean newAceHigh) {
-        switch(newSuit) {
-            case "Spades": this.suit = 1; break;
-            case "Hearts": this.suit = 2; break;
-            case "Diamonds": this.suit = 3; break;
-            case "Clubs": this.suit = 4; break;
-            default: this.suit = -1;
+        if (newSuit != null) {
+            switch (newSuit) {
+                case "Spades": this.suit = 1; break;
+                case "Hearts": this.suit = 2; break;
+                case "Diamonds": this.suit = 3; break;
+                case "Clubs": this.suit = 4; break;
+                default: this.suit = -1;
+            }
         }
         this.status = newStatus;
         this.aceHigh = newAceHigh;
@@ -184,7 +186,7 @@ public class PlayingCard extends Card implements Comparable {
     }
 
     /**
-     * This may need to be overwriten depending on the game. This allows for a trump suit and ace high/low comparison
+     * This may need to be overwritten depending on the game. This allows for a trump suit and ace high/low comparison
      * @param obj A playing card object to be compared to
      * @return 0 if equal, -1 if this is lower than obj, 1 if this is greater than obj, -2 if error
      */
@@ -217,6 +219,10 @@ public class PlayingCard extends Card implements Comparable {
 
     @Override
     public String getName() {
+        // If this card is the joker
+        if (this.getValue() == 15) {
+            return this.getStringValue();
+        }
         return this.getStringValue() + " of " + this.getStringSuit();
     }
 }
