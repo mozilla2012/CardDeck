@@ -3,6 +3,8 @@ package cardDeck;
 import org.junit.*;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 public class PlayingCardTests {
 
@@ -87,14 +89,33 @@ public class PlayingCardTests {
         ace = new PlayingCard(1, "Hearts");
         wut = new PlayingCard(1, "Hearts");
 
-        // Card should not equal something else
-        assertEquals(-2, ace.compareTo(new Integer(5)));
+        // Card should not equal some other object
+        try {
+            ace.compareTo(5);
+            fail();
+        } catch (ClassCastException e) {
+            // Expected. Continue.
+        }
+
+        // Card should not be null
+        try {
+            ace.compareTo(null);
+            fail();
+        } catch (NullPointerException e) {
+            // Expected. Continue.
+        }
+
+        // Card should compare to itself.
+        assert(ace.compareTo(ace) == 0);
 
         // Same suit, same value should be equal
         assert(ace.equals(wut));
 
         // Assert the same object is equal
         assert(ace.equals(ace));
+
+        // Assert an object is not equal to some other object
+        assertFalse(ace.equals(5));
 
         // Change suit, but compare should be the same
         wut.setSuit("Diamonds");

@@ -43,8 +43,8 @@ public class PlayingCard extends Card implements Comparable {
         this.suit = newSuit;
         this.status = newStatus;
         this.aceHigh = newAceHigh;
-        if (aceHigh && newValue == 1) {
-            this.value = 14;
+        if (aceHigh && newValue == CardValue.ACE_LOW.value) {
+            this.value = CardValue.ACE_HIGH.value;
         }
         else {
             this.value = newValue;
@@ -63,8 +63,8 @@ public class PlayingCard extends Card implements Comparable {
         }
         this.status = newStatus;
         this.aceHigh = newAceHigh;
-        if (aceHigh && newValue == 1) {
-            this.value = 14;
+        if (aceHigh && newValue == CardValue.ACE_LOW.value) {
+            this.value = CardValue.ACE_HIGH.value;
         }
         else {
             this.value = newValue;
@@ -106,7 +106,7 @@ public class PlayingCard extends Card implements Comparable {
             case "Hearts": this.suit = 2; break;
             case "Diamonds": this.suit = 3; break;
             case "Clubs": this.suit = 4; break;
-            default: this.suit = -1;
+            default: this.suit = UNKNOWN;
         }
     }
 
@@ -156,7 +156,7 @@ public class PlayingCard extends Card implements Comparable {
 
     public String getStringSuit(){
         switch (this.getSuit()) {
-            case -1: return "Unknown_Suit";
+            case UNKNOWN: return "Unknown_Suit";
             case 1: return "Spades";
             case 2: return "Hearts";
             case 3: return "Diamonds";
@@ -186,14 +186,19 @@ public class PlayingCard extends Card implements Comparable {
     }
 
     /**
-     * This may need to be overwritten depending on the game. This allows for a trump suit and ace high/low comparison
+     * This may need to be overwritten depending on the game. This allows for a trump suit and ace high/low comparison.
      * @param obj A playing card object to be compared to
-     * @return 0 if equal, -1 if this is lower than obj, 1 if this is greater than obj, -2 if error
+     * @return 0 if equal, -1 if this is lower than obj, 1 if this is greater than obj
+     * @throws NullPointerException if the specified object is null
+     * @throws ClassCastException if the specified object's type prevents it from being compared to this object.
      */
     @Override
-    public int compareTo(Object obj) {
+    public int compareTo(Object obj) throws NullPointerException, ClassCastException {
+        if (obj == null){
+            throw new NullPointerException("Comparable object cannot be null.");
+        }
         if (obj.getClass() != PlayingCard.class){
-            return -2;
+            throw new ClassCastException("Comparable object must be of PlayingCard type.");
         }
         if (this.equals(obj)) {
             return 0;
@@ -211,10 +216,7 @@ public class PlayingCard extends Card implements Comparable {
         if (this.getValue() < comp.getValue()) {
             return -1;
         }
-        if (this.getValue() == comp.getValue()) {
-            return 0;
-        }
-        return -2;
+        return 0;
     }
 
     @Override
@@ -224,5 +226,30 @@ public class PlayingCard extends Card implements Comparable {
             return this.getStringValue();
         }
         return this.getStringValue() + " of " + this.getStringSuit();
+    }
+
+    private enum CardValue {
+        ACE_LOW(1, "Ace"),
+        TWO(2, "Two"),
+        THREE(3, "Three"),
+        FOUR(4, "Four"),
+        FIVE(5, "Five"),
+        SIX(6, "Six"),
+        SEVEN(7, "Seven"),
+        EIGHT(8, "Eight"),
+        NINE(9, "Nine"),
+        TEN(10, "Ten"),
+        JACK(11, "Jack"),
+        QUEEN(12, "Queen"),
+        KING(13, "King"),
+        ACE_HIGH(14, "Ace");
+
+        private int value;
+        private String name;
+
+        CardValue(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
     }
 }
