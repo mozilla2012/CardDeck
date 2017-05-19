@@ -69,7 +69,7 @@ public class PlayingCardTests {
         assertEquals("Jack of Clubs", jack.getName());
         assertEquals("Queen of Spades", queen.getName());
         assertEquals("King of Diamonds", king.getName());
-        assertEquals("Two of Unknown_Suit", two.getName());
+        assertEquals("Two of Stars", two.getName());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class PlayingCardTests {
         assertEquals(1, ace.compareTo(wut));
         assertEquals(14, ace.getValue());
 
-        // Affrim setting ace low fixes value
+        // Affirm setting ace low fixes value
         ace.setAceHigh(false);
         assertEquals(1, ace.getValue());
     }
@@ -150,12 +150,76 @@ public class PlayingCardTests {
     public void cardGettersAndSetters() {
         String name = "Test Card Name";
         CardStatus status = CardStatus.ACTIVATED;
+
         Card card = new Card();
-        Card card2 = new Card(name);
         card.setName(name);
         card.setStatus(status);
         assertEquals(card.getName(), name);
-        assertEquals(card2.getName(), name);
         assertEquals(card.getStatus(), status);
+
+        card = new Card(name);
+        assertEquals(card.getName(), name);
+
+        PlayingCard card2 = new PlayingCard(1, 1, true);
+        card2.setSuit(2);
+        assertEquals(card2.getSuit(), 2);
+        assertEquals(card2.getStringSuit(), "Hearts");
+    }
+
+    @Test
+    public void testToString() {
+        ace = new PlayingCard(1, 1, true);
+        assertEquals("PlayingCard{value=14, suit=1, status=UNKNOWN, trump=false, aceHigh=true}", ace.toString());
+    }
+
+    @Test
+    public void testJoker() {
+        joker = new PlayingCard(15, -1);
+        assertEquals("Joker", joker.getName());
+        assertEquals(PlayingCard.SuitValues.UNKNOWN.value, joker.getSuit());
+
+        joker = new PlayingCard(15, "lol fake suits");
+        assertEquals("Joker", joker.getName());
+        assertEquals("lol fake suits", joker.getStringSuit());
+    }
+
+    @Test
+    public void testAceHigh() {
+        ace = new PlayingCard(1,1,true);
+        assert(ace.isAceHigh());
+        ace.setValue(1);
+        assertEquals(PlayingCard.CardValues.ACE_HIGH.value, ace.getValue());
+
+        ace = new PlayingCard(1,"Hearts",true);
+        assert(ace.isAceHigh());
+        assertEquals(PlayingCard.CardValues.ACE_HIGH.value, ace.getValue());
+
+        ace = new PlayingCard(14,"Hearts", false);
+        assertEquals(PlayingCard.CardValues.ACE_LOW.value, ace.getValue());
+    }
+
+    @Test
+    public void testConstructors() {
+        PlayingCard card = new PlayingCard();
+        assertEquals(-1, card.getValue());
+        assertEquals(-1, card.getSuit());
+
+        card = new PlayingCard(1, "Hearts", false);
+        assertEquals(1, card.getValue());
+        assertEquals("Hearts", card.getStringSuit());
+        assertEquals(2, card.getSuit());
+        assertEquals(false, card.isAceHigh());
+
+        card = new PlayingCard(1, 2, CardStatus.ACTIVATED);
+        assertEquals(1, card.getValue());
+        assertEquals("Hearts", card.getStringSuit());
+        assertEquals(2, card.getSuit());
+        assertEquals(CardStatus.ACTIVATED, card.getStatus());
+
+        card = new PlayingCard(1, "Hearts", CardStatus.ACTIVATED);
+        assertEquals(1, card.getValue());
+        assertEquals("Hearts", card.getStringSuit());
+        assertEquals(2, card.getSuit());
+        assertEquals(CardStatus.ACTIVATED, card.getStatus());
     }
 }

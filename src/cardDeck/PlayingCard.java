@@ -7,12 +7,13 @@ public class PlayingCard extends Card implements Comparable {
 
     private int value;
     private int suit;
+    private String stringSuit;
     private boolean trump;
     private boolean aceHigh;
-    private static final int UNKNOWN = -1;
+    private static final int UNKNOWN_VALUE = -1;
 
     public PlayingCard() {
-        this(UNKNOWN, UNKNOWN, CardStatus.UNKNOWN, false);
+        this(UNKNOWN_VALUE, UNKNOWN_VALUE, CardStatus.UNKNOWN, false);
     }
 
     public PlayingCard(int newValue, int newSuit) {
@@ -43,31 +44,30 @@ public class PlayingCard extends Card implements Comparable {
         this.suit = newSuit;
         this.status = newStatus;
         this.aceHigh = newAceHigh;
-        if (aceHigh && newValue == CardValue.ACE_LOW.value) {
-            this.value = CardValue.ACE_HIGH.value;
-        }
-        else {
-            this.value = newValue;
+        this.setValue(newValue);
+        String suitName = SuitValues.getValueName(newSuit);
+        this.stringSuit = suitName.equals(SuitValues.UNKNOWN.name) ? "Suit_" + newSuit : suitName;
+
+        if (this.getValue() == CardValues.JOKER.value) {
+            this.name = this.getStringValue();
+        } else {
+            this.name = this.getStringValue() + " of " + this.getStringSuit();
         }
     }
 
     public PlayingCard(int newValue, String newSuit, CardStatus newStatus, boolean newAceHigh) {
         if (newSuit != null) {
-            switch (newSuit) {
-                case "Spades": this.suit = 1; break;
-                case "Hearts": this.suit = 2; break;
-                case "Diamonds": this.suit = 3; break;
-                case "Clubs": this.suit = 4; break;
-                default: this.suit = -1;
-            }
+            this.suit = SuitValues.getSuitValue(newSuit).value;
         }
+        this.stringSuit = newSuit;
         this.status = newStatus;
         this.aceHigh = newAceHigh;
-        if (aceHigh && newValue == CardValue.ACE_LOW.value) {
-            this.value = CardValue.ACE_HIGH.value;
-        }
-        else {
-            this.value = newValue;
+        this.setValue(newValue);
+
+        if (this.getValue() == CardValues.JOKER.value) {
+            this.name = this.getStringValue();
+        } else {
+            this.name = this.getStringValue() + " of " + this.getStringSuit();
         }
     }
 
@@ -88,26 +88,26 @@ public class PlayingCard extends Card implements Comparable {
     }
 
     public void setValue(int newValue) {
-        if (aceHigh && newValue == 1) {
-            this.value = 14;
-        }
-        else {
+        if (aceHigh && newValue == CardValues.ACE_LOW.value) {
+            this.value = CardValues.ACE_HIGH.value;
+        } else if(!aceHigh && newValue == CardValues.ACE_HIGH.value) {
+            this.value = CardValues.ACE_LOW.value;
+        } else {
             this.value = newValue;
         }
     }
 
     public void setSuit(int newSuit) {
         this.suit = newSuit;
+        String suitName = SuitValues.getValueName(newSuit);
+        this.stringSuit = suitName.equals(SuitValues.UNKNOWN.name) ? "Suit_" + newSuit : suitName;
     }
 
     public void setSuit(String newSuit) {
-        switch(newSuit) {
-            case "Spades": this.suit = 1; break;
-            case "Hearts": this.suit = 2; break;
-            case "Diamonds": this.suit = 3; break;
-            case "Clubs": this.suit = 4; break;
-            default: this.suit = UNKNOWN;
+        if (newSuit != null) {
+            this.suit = SuitValues.getSuitValue(newSuit).value;
         }
+        this.stringSuit = newSuit;
     }
 
     public void setTrump(boolean newTrump) {
@@ -125,44 +125,23 @@ public class PlayingCard extends Card implements Comparable {
 
     public void setAceHigh(boolean newAceHigh) {
         this.aceHigh = newAceHigh;
-        if (getValue() == 1 && newAceHigh) {
-            this.setValue(14);
+        if (this.getValue() == CardValues.ACE_LOW.value && newAceHigh) {
+            this.setValue(CardValues.ACE_HIGH.value);
         }
-        else if (getValue() == 14 && !newAceHigh) {
-            this.setValue(1);
+        else if (this.getValue() == CardValues.ACE_HIGH.value && !newAceHigh) {
+            this.setValue(CardValues.ACE_LOW.value);
         }
     }
 
     public String getStringValue(){
-        switch (this.getValue()) {
-            case 1:
-            case 14: return "Ace";
-            case 11: return "Jack";
-            case 12: return "Queen";
-            case 13: return "King";
-            case 15: return "Joker";
-            case 2: return "Two";
-            case 3: return "Three";
-            case 4: return "Four";
-            case 5: return "Five";
-            case 6: return "Six";
-            case 7: return "Seven";
-            case 8: return "Eight";
-            case 9: return "Nine";
-            case 10: return "Ten";
-            default: return Integer.toString(value);
-        }
+        String cardValueName = CardValues.getValueName(this.getValue());
+        return cardValueName.equals(CardValues.UNKNOWN.name)
+                ? Integer.toString(this.getValue())
+                : cardValueName;
     }
 
     public String getStringSuit(){
-        switch (this.getSuit()) {
-            case UNKNOWN: return "Unknown_Suit";
-            case 1: return "Spades";
-            case 2: return "Hearts";
-            case 3: return "Diamonds";
-            case 4: return "Clubs";
-            default: return "Suit_" + String.valueOf(this.getSuit());
-        }
+        return stringSuit;
     }
 
     @Override
@@ -219,16 +198,7 @@ public class PlayingCard extends Card implements Comparable {
         return 0;
     }
 
-    @Override
-    public String getName() {
-        // If this card is the joker
-        if (this.getValue() == 15) {
-            return this.getStringValue();
-        }
-        return this.getStringValue() + " of " + this.getStringSuit();
-    }
-
-    private enum CardValue {
+    public enum CardValues {
         ACE_LOW(1, "Ace"),
         TWO(2, "Two"),
         THREE(3, "Three"),
@@ -242,14 +212,67 @@ public class PlayingCard extends Card implements Comparable {
         JACK(11, "Jack"),
         QUEEN(12, "Queen"),
         KING(13, "King"),
-        ACE_HIGH(14, "Ace");
+        ACE_HIGH(14, "Ace"),
+        JOKER(15, "Joker"),
+        UNKNOWN(UNKNOWN_VALUE, "Unknown");
 
-        private int value;
-        private String name;
+        public int value;
+        public String name;
 
-        CardValue(int value, String name) {
+        CardValues(int value, String name) {
             this.value = value;
             this.name = name;
+        }
+
+        public static String getValueName(int value) {
+            return getCardValue(value).name;
+        }
+
+        public static CardValues getCardValue(int value) {
+            for (CardValues c : CardValues.values()) {
+                if (c.value == value) {
+                    return c;
+                }
+            }
+            return UNKNOWN;
+        }
+    }
+
+    public enum SuitValues {
+        SPADES(1, "Spades"),
+        HEARTS(2, "Hearts"),
+        DIAMONDS(3, "Diamonds"),
+        CLUBS(4, "Clubs"),
+        UNKNOWN(UNKNOWN_VALUE, "Unknown");
+
+        public int value;
+        public String name;
+
+        SuitValues(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+        public static String getValueName(int value) {
+            return getSuitValue(value).name;
+        }
+
+        public static SuitValues getSuitValue(int value) {
+            for (SuitValues s : SuitValues.values()) {
+                if (s.value == value) {
+                    return s;
+                }
+            }
+            return UNKNOWN;
+        }
+
+        public static SuitValues getSuitValue(String name) {
+            for (SuitValues s : SuitValues.values()) {
+                if (s.name.equals(name)) {
+                    return s;
+                }
+            }
+            return UNKNOWN;
         }
     }
 }
