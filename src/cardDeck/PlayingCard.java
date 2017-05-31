@@ -5,77 +5,76 @@ package cardDeck;
  */
 public class PlayingCard extends Card implements Comparable {
 
-    private int value;
-    private int suit;
-    private String stringSuit;
+    private CardValue cardValue;
+    private SuitValue suit;
+    private int valueInteger;
+    private String suitName;
     private boolean trump;
     private boolean aceHigh;
-    private static final int UNKNOWN_VALUE = -1;
 
     public PlayingCard() {
-        this(UNKNOWN_VALUE, UNKNOWN_VALUE, CardStatus.UNKNOWN, false);
+        this(CardValue.UNKNOWN, SuitValue.UNKNOWN, CardStatus.UNKNOWN, false);
     }
 
-    public PlayingCard(int newValue, int newSuit) {
-        this(newValue, newSuit, CardStatus.UNKNOWN, false);
+    public PlayingCard(int newValue, SuitValue newSuit) {
+        this(newValue, newSuit.name, CardStatus.UNKNOWN, false);
     }
 
     public PlayingCard(int newValue, String newSuit) {
         this(newValue, newSuit, CardStatus.UNKNOWN, false);
     }
 
-    public PlayingCard(int newValue, int newSuit, boolean newAceHigh) {
-        this(newValue, newSuit, CardStatus.UNKNOWN, newAceHigh);
-    }
-
     public PlayingCard(int newValue, String newSuit, boolean newAceHigh) {
         this(newValue, newSuit, CardStatus.UNKNOWN, newAceHigh);
-    }
-
-    public PlayingCard(int newValue, int newSuit, CardStatus newStatus) {
-        this(newValue, newSuit, newStatus, false);
     }
 
     public PlayingCard(int newValue, String newSuit, CardStatus newStatus) {
         this(newValue, newSuit, newStatus, false);
     }
 
-    public PlayingCard(int newValue, int newSuit, CardStatus newStatus, boolean newAceHigh) {
-        this.suit = newSuit;
-        this.status = newStatus;
-        this.aceHigh = newAceHigh;
-        this.setValue(newValue);
-        String suitName = SuitValues.getValueName(newSuit);
-        this.stringSuit = suitName.equals(SuitValues.UNKNOWN.name) ? "Suit_" + newSuit : suitName;
-
-        if (this.getValue() == CardValues.JOKER.value) {
-            this.name = this.getStringValue();
-        } else {
-            this.name = this.getStringValue() + " of " + this.getStringSuit();
-        }
-    }
-
     public PlayingCard(int newValue, String newSuit, CardStatus newStatus, boolean newAceHigh) {
-        if (newSuit != null) {
-            this.suit = SuitValues.getSuitValue(newSuit).value;
-        }
-        this.stringSuit = newSuit;
         this.status = newStatus;
         this.aceHigh = newAceHigh;
-        this.setValue(newValue);
+        this.setCardValue(CardValue.getCardValue(newValue));
+        this.suit = SuitValue.getSuitValue(newSuit);
+        this.valueInteger = newValue;
+        this.suitName = newSuit;
 
-        if (this.getValue() == CardValues.JOKER.value) {
+        if (this.getCardValue() == CardValue.JOKER) {
             this.name = this.getStringValue();
         } else {
             this.name = this.getStringValue() + " of " + this.getStringSuit();
         }
     }
 
-    public int getValue() {
-        return value;
+    public PlayingCard(CardValue newValue, String newSuit) {
+        this(newValue.value, newSuit, CardStatus.UNKNOWN, false);
     }
 
-    public int getSuit() {
+    public PlayingCard(CardValue newValue, SuitValue newSuit) {
+        this(newValue, newSuit, CardStatus.UNKNOWN, false);
+    }
+
+    public PlayingCard(CardValue newValue, SuitValue newSuit, CardStatus newStatus, boolean newAceHigh) {
+        this.status = newStatus;
+        this.aceHigh = newAceHigh;
+        this.setCardValue(newValue);
+        this.suit = newSuit;
+        this.valueInteger = newValue.value;
+        this.suitName = newSuit.name;
+
+        if (this.getCardValue() == CardValue.JOKER) {
+            this.name = this.getStringValue();
+        } else {
+            this.name = this.getStringValue() + " of " + this.getStringSuit();
+        }
+    }
+
+    public CardValue getCardValue() {
+        return cardValue;
+    }
+
+    public SuitValue getSuit() {
         return suit;
     }
 
@@ -87,27 +86,40 @@ public class PlayingCard extends Card implements Comparable {
         return aceHigh;
     }
 
-    public void setValue(int newValue) {
-        if (aceHigh && newValue == CardValues.ACE_LOW.value) {
-            this.value = CardValues.ACE_HIGH.value;
-        } else if(!aceHigh && newValue == CardValues.ACE_HIGH.value) {
-            this.value = CardValues.ACE_LOW.value;
+    public void setCardValue(CardValue newValue) {
+        if (aceHigh && newValue == CardValue.ACE_LOW) {
+            this.cardValue = CardValue.ACE_HIGH;
+        } else if(!aceHigh && newValue == CardValue.ACE_HIGH) {
+            this.cardValue = CardValue.ACE_LOW;
         } else {
-            this.value = newValue;
+            this.cardValue = newValue;
         }
+        this.valueInteger = this.cardValue.value;
     }
 
-    public void setSuit(int newSuit) {
+    public void setCardValue(int newValue) {
+        if (aceHigh && newValue == CardValue.ACE_LOW.value) {
+            this.cardValue = CardValue.ACE_HIGH;
+        } else if(!aceHigh && newValue == CardValue.ACE_HIGH.value) {
+            this.cardValue = CardValue.ACE_LOW;
+        } else {
+            this.cardValue = CardValue.getCardValue(newValue);
+        }
+        this.valueInteger = newValue;
+    }
+
+    public void setSuit(SuitValue newSuit) {
         this.suit = newSuit;
-        String suitName = SuitValues.getValueName(newSuit);
-        this.stringSuit = suitName.equals(SuitValues.UNKNOWN.name) ? "Suit_" + newSuit : suitName;
+        this.suitName = newSuit.name;
     }
 
     public void setSuit(String newSuit) {
         if (newSuit != null) {
-            this.suit = SuitValues.getSuitValue(newSuit).value;
+            setSuit(SuitValue.getSuitValue(newSuit));
         }
-        this.stringSuit = newSuit;
+        if (this.suit == SuitValue.UNKNOWN) {
+            this.suitName = newSuit;
+        }
     }
 
     public void setTrump(boolean newTrump) {
@@ -115,39 +127,39 @@ public class PlayingCard extends Card implements Comparable {
     }
 
     public void setTrump(String trumpSuit) {
-        if (this.getStringSuit().equals(trumpSuit)) {
-            this.setTrump(true);
-        }
-        else {
-            this.setTrump(false);
-        }
+        this.setTrump(this.getStringSuit().equals(trumpSuit));
+    }
+
+    public void setTrump(SuitValue trumpSuit) {
+        this.setTrump(this.getSuit() == trumpSuit);
     }
 
     public void setAceHigh(boolean newAceHigh) {
         this.aceHigh = newAceHigh;
-        if (this.getValue() == CardValues.ACE_LOW.value && newAceHigh) {
-            this.setValue(CardValues.ACE_HIGH.value);
+        if (this.getCardValue() == CardValue.ACE_LOW && newAceHigh) {
+            this.setCardValue(CardValue.ACE_HIGH);
         }
-        else if (this.getValue() == CardValues.ACE_HIGH.value && !newAceHigh) {
-            this.setValue(CardValues.ACE_LOW.value);
+        else if (this.getCardValue() == CardValue.ACE_HIGH && !newAceHigh) {
+            this.setCardValue(CardValue.ACE_LOW);
         }
     }
 
     public String getStringValue(){
-        String cardValueName = CardValues.getValueName(this.getValue());
-        return cardValueName.equals(CardValues.UNKNOWN.name)
-                ? Integer.toString(this.getValue())
-                : cardValueName;
+        return (this.getCardValue() == CardValue.UNKNOWN)
+                ? String.format("%s", this.valueInteger)
+                : this.getCardValue().name;
     }
 
     public String getStringSuit(){
-        return stringSuit;
+        return (this.getSuit() == SuitValue.UNKNOWN)
+                ? this.suitName
+                : this.getSuit().name;
     }
 
     @Override
     public String toString() {
         return "PlayingCard{" +
-                "value=" + value +
+                "cardValue=" + cardValue +
                 ", suit=" + suit +
                 ", status=" + status +
                 ", trump=" + trump +
@@ -161,7 +173,7 @@ public class PlayingCard extends Card implements Comparable {
             return false;
         }
         PlayingCard comp = (PlayingCard)obj;
-        return (comp.getSuit() == this.getSuit() && comp.getValue() == this.getValue());
+        return (comp.getSuit() == this.getSuit() && comp.getCardValue() == this.getCardValue());
     }
 
     /**
@@ -189,90 +201,12 @@ public class PlayingCard extends Card implements Comparable {
         if (!this.isTrump() && comp.isTrump()) {
             return -1;
         }
-        if (this.getValue() > comp.getValue()) {
+        if (this.getCardValue().value > comp.getCardValue().value) {
             return 1;
         }
-        if (this.getValue() < comp.getValue()) {
+        if (this.getCardValue().value < comp.getCardValue().value) {
             return -1;
         }
         return 0;
-    }
-
-    public enum CardValues {
-        ACE_LOW(1, "Ace"),
-        TWO(2, "Two"),
-        THREE(3, "Three"),
-        FOUR(4, "Four"),
-        FIVE(5, "Five"),
-        SIX(6, "Six"),
-        SEVEN(7, "Seven"),
-        EIGHT(8, "Eight"),
-        NINE(9, "Nine"),
-        TEN(10, "Ten"),
-        JACK(11, "Jack"),
-        QUEEN(12, "Queen"),
-        KING(13, "King"),
-        ACE_HIGH(14, "Ace"),
-        JOKER(15, "Joker"),
-        UNKNOWN(UNKNOWN_VALUE, "Unknown");
-
-        public int value;
-        public String name;
-
-        CardValues(int value, String name) {
-            this.value = value;
-            this.name = name;
-        }
-
-        public static String getValueName(int value) {
-            return getCardValue(value).name;
-        }
-
-        public static CardValues getCardValue(int value) {
-            for (CardValues c : CardValues.values()) {
-                if (c.value == value) {
-                    return c;
-                }
-            }
-            return UNKNOWN;
-        }
-    }
-
-    public enum SuitValues {
-        SPADES(1, "Spades"),
-        HEARTS(2, "Hearts"),
-        DIAMONDS(3, "Diamonds"),
-        CLUBS(4, "Clubs"),
-        UNKNOWN(UNKNOWN_VALUE, "Unknown");
-
-        public int value;
-        public String name;
-
-        SuitValues(int value, String name) {
-            this.value = value;
-            this.name = name;
-        }
-
-        public static String getValueName(int value) {
-            return getSuitValue(value).name;
-        }
-
-        public static SuitValues getSuitValue(int value) {
-            for (SuitValues s : SuitValues.values()) {
-                if (s.value == value) {
-                    return s;
-                }
-            }
-            return UNKNOWN;
-        }
-
-        public static SuitValues getSuitValue(String name) {
-            for (SuitValues s : SuitValues.values()) {
-                if (s.name.equals(name)) {
-                    return s;
-                }
-            }
-            return UNKNOWN;
-        }
     }
 }

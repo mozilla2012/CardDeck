@@ -26,21 +26,21 @@ public class PlayingCardTests {
 
     @Test
     public void printNames(){
-        ace = new PlayingCard(1, 1);
-        two = new PlayingCard(2, 3);
-        three = new PlayingCard(3, 2);
-        four = new PlayingCard(4, 3);
-        five = new PlayingCard(5, 4);
-        six = new PlayingCard(6, 1);
-        seven = new PlayingCard(7, 3);
-        eight = new PlayingCard(8, 4);
-        nine = new PlayingCard(9, 3);
-        ten = new PlayingCard(10, 4);
-        jack = new PlayingCard(11, 1);
-        queen = new PlayingCard(12, 1);
-        king = new PlayingCard(13, 2);
-        joker = new PlayingCard(15, null);
-        wut = new PlayingCard(0, 5);
+        ace = new PlayingCard(1, "Spades");
+        two = new PlayingCard(2, "Diamonds");
+        three = new PlayingCard(3, "Hearts");
+        four = new PlayingCard(4, "Diamonds");
+        five = new PlayingCard(5, "Clubs");
+        six = new PlayingCard(6, "Spades");
+        seven = new PlayingCard(7, "Diamonds");
+        eight = new PlayingCard(8, "Clubs");
+        nine = new PlayingCard(9, "Diamonds");
+        ten = new PlayingCard(10, "Clubs");
+        jack = new PlayingCard(11, "Spades");
+        queen = new PlayingCard(12, "Spades");
+        king = new PlayingCard(13, "Hearts");
+        joker = new PlayingCard(15, "");
+        wut = new PlayingCard(0, "Stars");
         assertEquals("Ace of Spades", ace.getName());
         assertEquals("Two of Diamonds", two.getName());
         assertEquals("Three of Hearts", three.getName());
@@ -55,7 +55,7 @@ public class PlayingCardTests {
         assertEquals("Queen of Spades", queen.getName());
         assertEquals("King of Hearts", king.getName());
         assertEquals("Joker", joker.getName());
-        assertEquals("0 of Suit_5", wut.getName());
+        assertEquals("0 of Stars", wut.getName());
     }
 
     @Test
@@ -82,6 +82,8 @@ public class PlayingCardTests {
         assert(jack.isTrump());
         jack.setTrump("Hearts");
         assert(!jack.isTrump());
+        ace.setTrump(SuitValue.DIAMONDS);
+        assert(!ace.isTrump());
     }
 
     @Test
@@ -133,17 +135,17 @@ public class PlayingCardTests {
         ace.setTrump(false);
 
         // Test ace low
-        wut.setValue(2);
+        wut.setCardValue(2);
         assertEquals(-1, ace.compareTo(wut));
 
         // Test ace high
         ace.setAceHigh(true);
         assertEquals(1, ace.compareTo(wut));
-        assertEquals(14, ace.getValue());
+        assertEquals(14, ace.getCardValue().value);
 
         // Affirm setting ace low fixes value
         ace.setAceHigh(false);
-        assertEquals(1, ace.getValue());
+        assertEquals(1, ace.getCardValue().value);
     }
 
     @Test
@@ -160,66 +162,89 @@ public class PlayingCardTests {
         card = new Card(name);
         assertEquals(card.getName(), name);
 
-        PlayingCard card2 = new PlayingCard(1, 1, true);
-        card2.setSuit(2);
-        assertEquals(card2.getSuit(), 2);
+        PlayingCard card2 = new PlayingCard(1, "Spades", true);
+        card2.setSuit("Hearts");
+        assertEquals(SuitValue.HEARTS, card2.getSuit());
         assertEquals(card2.getStringSuit(), "Hearts");
+
+        card2.setSuit("Stars");
+        assertEquals(SuitValue.UNKNOWN, card2.getSuit());
+        assertEquals("Stars", card2.getStringSuit());
     }
 
     @Test
     public void testToString() {
-        ace = new PlayingCard(1, 1, true);
-        assertEquals("PlayingCard{value=14, suit=1, status=UNKNOWN, trump=false, aceHigh=true}", ace.toString());
+        ace = new PlayingCard(1, "Spades", true);
+        assertEquals("PlayingCard{cardValue=ACE_HIGH, suit=SPADES, status=UNKNOWN, trump=false, aceHigh=true}",
+                ace.toString());
     }
 
     @Test
     public void testJoker() {
-        joker = new PlayingCard(15, -1);
+        joker = new PlayingCard(15, SuitValue.UNKNOWN);
         assertEquals("Joker", joker.getName());
-        assertEquals(PlayingCard.SuitValues.UNKNOWN.value, joker.getSuit());
+        assertEquals(SuitValue.UNKNOWN, joker.getSuit());
 
         joker = new PlayingCard(15, "lol fake suits");
         assertEquals("Joker", joker.getName());
         assertEquals("lol fake suits", joker.getStringSuit());
+
+        joker = new PlayingCard(CardValue.JOKER, SuitValue.UNKNOWN);
+        assertEquals("Joker", joker.getName());
+        assertEquals("Unknown", joker.getStringSuit());
     }
 
     @Test
     public void testAceHigh() {
-        ace = new PlayingCard(1,1,true);
+        ace = new PlayingCard(1,"Spades",true);
         assert(ace.isAceHigh());
-        ace.setValue(1);
-        assertEquals(PlayingCard.CardValues.ACE_HIGH.value, ace.getValue());
+        ace.setCardValue(1);
+        assertEquals(CardValue.ACE_HIGH, ace.getCardValue());
 
         ace = new PlayingCard(1,"Hearts",true);
         assert(ace.isAceHigh());
-        assertEquals(PlayingCard.CardValues.ACE_HIGH.value, ace.getValue());
+        assertEquals(CardValue.ACE_HIGH, ace.getCardValue());
 
         ace = new PlayingCard(14,"Hearts", false);
-        assertEquals(PlayingCard.CardValues.ACE_LOW.value, ace.getValue());
+        assertEquals(CardValue.ACE_LOW, ace.getCardValue());
+
+        ace = new PlayingCard(1,"Hearts", false);
+        ace.setCardValue(14);
+        assertEquals(CardValue.ACE_LOW, ace.getCardValue());
     }
 
     @Test
     public void testConstructors() {
         PlayingCard card = new PlayingCard();
-        assertEquals(-1, card.getValue());
-        assertEquals(-1, card.getSuit());
+        assertEquals(-1, card.getCardValue().value);
+        assertEquals(SuitValue.UNKNOWN, card.getSuit());
 
         card = new PlayingCard(1, "Hearts", false);
-        assertEquals(1, card.getValue());
+        assertEquals(1, card.getCardValue().value);
         assertEquals("Hearts", card.getStringSuit());
-        assertEquals(2, card.getSuit());
+        assertEquals(SuitValue.HEARTS, card.getSuit());
         assertEquals(false, card.isAceHigh());
 
-        card = new PlayingCard(1, 2, CardStatus.ACTIVATED);
-        assertEquals(1, card.getValue());
+        card = new PlayingCard(1, "Hearts", CardStatus.ACTIVATED);
+        assertEquals(1, card.getCardValue().value);
         assertEquals("Hearts", card.getStringSuit());
-        assertEquals(2, card.getSuit());
+        assertEquals(SuitValue.HEARTS, card.getSuit());
         assertEquals(CardStatus.ACTIVATED, card.getStatus());
 
         card = new PlayingCard(1, "Hearts", CardStatus.ACTIVATED);
-        assertEquals(1, card.getValue());
+        assertEquals(1, card.getCardValue().value);
         assertEquals("Hearts", card.getStringSuit());
-        assertEquals(2, card.getSuit());
+        assertEquals(SuitValue.HEARTS, card.getSuit());
         assertEquals(CardStatus.ACTIVATED, card.getStatus());
+
+        card = new PlayingCard(CardValue.TEN, "Stars");
+        assertEquals(10, card.getCardValue().value);
+        assertEquals("Stars", card.getStringSuit());
+        assertEquals("Stars", card.getStringSuit());
+    }
+
+    @Test
+    public void testCardValueNames() {
+        assertEquals("Jack", CardValue.getValueName(11));
     }
 }

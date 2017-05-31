@@ -17,7 +17,7 @@ public class Deck {
     }
 
     public Deck(ArrayList<Card> newPile) {
-        this("", newPile, true);
+        this(null, newPile, true);
     }
 
     public Deck(String newName, ArrayList<Card> newPile) {
@@ -129,11 +129,14 @@ public class Deck {
     }
 
     public ArrayList<String> getCardNames() {
-        ArrayList<String> cards = new ArrayList<>();
-        for (Card c : pile) {
-            cards.add(c.getName());
+        if (this.getPile() == null) {
+            return null;
         }
-        return cards;
+        ArrayList<String> cardNames = new ArrayList<>();
+        for (Card c : this.getPile()) {
+            cardNames.add(c.getName());
+        }
+        return cardNames;
     }
 
     @Override
@@ -147,4 +150,11 @@ public class Deck {
         }
         return toString;
     }
+
+    //This belongs in a playing card deck class
+//    public static Deck generate52CardDesk() {
+//
+//    }
+
+    //Also, setTrump and setAceHigh
 }
