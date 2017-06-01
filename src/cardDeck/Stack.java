@@ -6,25 +6,25 @@ import java.util.Collections;
 /**
  * This can be used to represent any stack of cards... A draw deck, a kitty, a hand, a trash pile, etc.
  */
-public class Deck {
+public class Stack {
 
     private String name;
     private ArrayList<Card> pile; // 0 is the top of the deck, face down.
     private boolean faceDown;
 
-    public Deck(String newName) {
+    public Stack(String newName) {
         this(newName, null, true);
     }
 
-    public Deck(ArrayList<Card> newPile) {
+    public Stack(ArrayList<Card> newPile) {
         this(null, newPile, true);
     }
 
-    public Deck(String newName, ArrayList<Card> newPile) {
+    public Stack(String newName, ArrayList<Card> newPile) {
         this(newName, newPile, true);
     }
 
-    public Deck(String newName, ArrayList<Card> newPile, boolean newFacedown) {
+    public Stack(String newName, ArrayList<Card> newPile, boolean newFacedown) {
         this.name = newName;
         this.pile = newPile;
         this.faceDown = newFacedown;
@@ -152,7 +152,7 @@ public class Deck {
     }
 
     //This belongs in a playing card deck class
-//    public static Deck generate52CardDesk() {
+//    public static Stack generate52CardDesk() {
 //
 //    }
 
