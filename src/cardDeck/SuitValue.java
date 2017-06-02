@@ -22,7 +22,7 @@ public enum SuitValue {
      * Private constructor for the enum.
      * @param name the name of the suit.
      */
-    SuitValue(String name) {
+    SuitValue(final String name) {
         this.name = name;
     }
 
@@ -31,7 +31,7 @@ public enum SuitValue {
      * @param name The string name of the suit, e.g. "Spades"
      * @return the enum value of the suit, e.g. SPADES
      */
-    public static SuitValue getSuitValue(String name) {
+    public static SuitValue getSuitValue(final String name) {
         for (SuitValue s : SuitValue.values()) {
             if (s.name.equals(name)) {
                 return s;

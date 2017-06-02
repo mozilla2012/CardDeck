@@ -47,7 +47,7 @@ public enum CardValue {
      * @param value the numeric value of the card's value
      * @param name the String name of the card, for printing
      */
-    CardValue(int value, String name) {
+    CardValue(final int value, final String name) {
         this.value = value;
         this.name = name;
     }
@@ -57,7 +57,7 @@ public enum CardValue {
      * @param value the numeric value to be translated to a String name
      * @return the name of the numeric value for printing
      */
-    public static String getValueName(int value) {
+    public static String getValueName(final int value) {
         return getCardValue(value).name;
     }
 
@@ -66,7 +66,7 @@ public enum CardValue {
      * @param value the numeric value to be translated into a CardValue
      * @return the CardValue related to the given numeric value
      */
-    public static CardValue getCardValue(int value) {
+    public static CardValue getCardValue(final int value) {
         for (CardValue c : CardValue.values()) {
             if (c.value == value) {
                 return c;

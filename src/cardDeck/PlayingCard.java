@@ -16,23 +16,23 @@ public class PlayingCard extends Card implements Comparable {
         this(CardValue.UNKNOWN, SuitValue.UNKNOWN, CardStatus.UNKNOWN, false);
     }
 
-    public PlayingCard(int newValue, SuitValue newSuit) {
+    public PlayingCard(final int newValue, final SuitValue newSuit) {
         this(newValue, newSuit.name, CardStatus.UNKNOWN, false);
     }
 
-    public PlayingCard(int newValue, String newSuit) {
+    public PlayingCard(final int newValue, final String newSuit) {
         this(newValue, newSuit, CardStatus.UNKNOWN, false);
     }
 
-    public PlayingCard(int newValue, String newSuit, boolean newAceHigh) {
+    public PlayingCard(final int newValue, final String newSuit, boolean newAceHigh) {
         this(newValue, newSuit, CardStatus.UNKNOWN, newAceHigh);
     }
 
-    public PlayingCard(int newValue, String newSuit, CardStatus newStatus) {
+    public PlayingCard(final int newValue, final String newSuit, CardStatus newStatus) {
         this(newValue, newSuit, newStatus, false);
     }
 
-    public PlayingCard(int newValue, String newSuit, CardStatus newStatus, boolean newAceHigh) {
+    public PlayingCard(final int newValue, final String newSuit, CardStatus newStatus, boolean newAceHigh) {
         this.status = newStatus;
         this.aceHigh = newAceHigh;
         this.setCardValue(CardValue.getCardValue(newValue));
@@ -47,15 +47,15 @@ public class PlayingCard extends Card implements Comparable {
         }
     }
 
-    public PlayingCard(CardValue newValue, String newSuit) {
+    public PlayingCard(final CardValue newValue, final String newSuit) {
         this(newValue.value, newSuit, CardStatus.UNKNOWN, false);
     }
 
-    public PlayingCard(CardValue newValue, SuitValue newSuit) {
+    public PlayingCard(final CardValue newValue, final SuitValue newSuit) {
         this(newValue, newSuit, CardStatus.UNKNOWN, false);
     }
 
-    public PlayingCard(CardValue newValue, SuitValue newSuit, CardStatus newStatus, boolean newAceHigh) {
+    public PlayingCard(final CardValue newValue, final SuitValue newSuit, CardStatus newStatus, boolean newAceHigh) {
         this.status = newStatus;
         this.aceHigh = newAceHigh;
         this.setCardValue(newValue);
@@ -86,7 +86,7 @@ public class PlayingCard extends Card implements Comparable {
         return aceHigh;
     }
 
-    public void setCardValue(CardValue newValue) {
+    public void setCardValue(final CardValue newValue) {
         if (aceHigh && newValue == CardValue.ACE_LOW) {
             this.cardValue = CardValue.ACE_HIGH;
         } else if(!aceHigh && newValue == CardValue.ACE_HIGH) {
@@ -97,7 +97,7 @@ public class PlayingCard extends Card implements Comparable {
         this.valueInteger = this.cardValue.value;
     }
 
-    public void setCardValue(int newValue) {
+    public void setCardValue(final int newValue) {
         if (aceHigh && newValue == CardValue.ACE_LOW.value) {
             this.cardValue = CardValue.ACE_HIGH;
         } else if(!aceHigh && newValue == CardValue.ACE_HIGH.value) {
@@ -108,12 +108,12 @@ public class PlayingCard extends Card implements Comparable {
         this.valueInteger = newValue;
     }
 
-    public void setSuit(SuitValue newSuit) {
+    public void setSuit(final SuitValue newSuit) {
         this.suit = newSuit;
         this.suitName = newSuit.name;
     }
 
-    public void setSuit(String newSuit) {
+    public void setSuit(final String newSuit) {
         if (newSuit != null) {
             setSuit(SuitValue.getSuitValue(newSuit));
         }
@@ -122,19 +122,19 @@ public class PlayingCard extends Card implements Comparable {
         }
     }
 
-    public void setTrump(boolean newTrump) {
+    public void setTrump(final boolean newTrump) {
         this.trump = newTrump;
     }
 
-    public void setTrump(String trumpSuit) {
+    public void setTrump(final String trumpSuit) {
         this.setTrump(this.getStringSuit().equals(trumpSuit));
     }
 
-    public void setTrump(SuitValue trumpSuit) {
+    public void setTrump(final SuitValue trumpSuit) {
         this.setTrump(this.getSuit() == trumpSuit);
     }
 
-    public void setAceHigh(boolean newAceHigh) {
+    public void setAceHigh(final boolean newAceHigh) {
         this.aceHigh = newAceHigh;
         if (this.getCardValue() == CardValue.ACE_LOW && newAceHigh) {
             this.setCardValue(CardValue.ACE_HIGH);
@@ -168,7 +168,7 @@ public class PlayingCard extends Card implements Comparable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj.getClass() != PlayingCard.class){
             return false;
         }
@@ -184,7 +184,7 @@ public class PlayingCard extends Card implements Comparable {
      * @throws ClassCastException if the specified object's type prevents it from being compared to this object.
      */
     @Override
-    public int compareTo(Object obj) throws NullPointerException, ClassCastException {
+    public int compareTo(final Object obj) throws NullPointerException, ClassCastException {
         if (obj == null){
             throw new NullPointerException("Comparable object cannot be null.");
         }

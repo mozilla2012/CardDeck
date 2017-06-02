@@ -2,7 +2,8 @@ package cardDeck;
 
 import org.junit.*;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -246,5 +247,21 @@ public class PlayingCardTests {
     @Test
     public void testCardValueNames() {
         assertEquals("Jack", CardValue.getValueName(11));
+    }
+
+    @Test
+    public void testCardEquals() {
+        Card card1 = new Card("Test card", CardStatus.ACTIVATED);
+        Card card2 = new Card("Test card", CardStatus.DEACTIVATED);
+        Card card3 = new Card("Test card2", CardStatus.ACTIVATED);
+        Card card4 = new Card("Test card2", CardStatus.DEACTIVATED);
+        Card card5 = new Card("Test card", CardStatus.ACTIVATED);
+
+        assertTrue(card1.equals(card5));
+        assertFalse(card1.equals(null));
+        assertFalse(card1.equals("Nope"));
+        assertFalse(card1.equals(card2));
+        assertFalse(card1.equals(card3));
+        assertFalse(card1.equals(card4));
     }
 }
